@@ -1,0 +1,193 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==========================================
+// 1. User - ผู้ใช้งาน (Admin / Student)
+// ==========================================
+enum Role {
+  ADMIN
+  STUDENT
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(STUDENT)
+  image     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cart            Cart?
+  orders          Order[]
+  enrollments     Enrollment[]
+  lessonProgress  LessonProgress[]
+}
+
+// ==========================================
+// 2. Course - คอร์สเรียน
+// ==========================================
+model Course {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String
+  price       Float
+  imageUrl    String?
+  published   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  lessons     Lesson[]
+  orderItems  OrderItem[]
+  cartItems   CartItem[]
+  enrollments Enrollment[]
+}
+
+// ==========================================
+// 3. Lesson - บทเรียนในแต่ละคอร์ส
+// ==========================================
+model Lesson {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  youtubeUrl  String
+  position    Int
+  courseId     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  course         Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessonProgress LessonProgress[]
+
+  @@index([courseId])
+}
+
+// ==========================================
+// 4. Enrollment - การลงทะเบียนเรียน
+// ==========================================
+enum EnrollmentStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+}
+
+model Enrollment {
+  id        String           @id @default(cuid())
+  userId    String
+  courseId   String
+  status    EnrollmentStatus @default(ACTIVE)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+  @@index([userId])
+  @@index([courseId])
+}
+
+// ==========================================
+// 5. Order - คำสั่งซื้อ
+// ==========================================
+enum OrderStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Order {
+  id        String      @id @default(cuid())
+  userId    String
+  total     Float
+  status    OrderStatus @default(PENDING)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     OrderItem[]
+  payment   Payment?
+
+  @@index([userId])
+}
+
+// ==========================================
+// 6. OrderItem - รายการสินค้าในคำสั่งซื้อ
+// ==========================================
+model OrderItem {
+  id       String @id @default(cuid())
+  orderId  String
+  courseId  String
+  price    Float
+
+  order  Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+}
+
+// ==========================================
+// 7. Cart - ตะกร้าสินค้า (1 คนมี 1 ตะกร้า)
+// ==========================================
+model Cart {
+  id     String     @id @default(cuid())
+  userId String     @unique
+
+  user  User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items CartItem[]
+}
+
+// ==========================================
+// 8. CartItem - รายการในตะกร้า
+// ==========================================
+model CartItem {
+  id       String @id @default(cuid())
+  cartId   String
+  courseId  String
+
+  cart   Cart   @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([cartId, courseId])
+  @@index([cartId])
+}
+
+// ==========================================
+// 9. Payment - การชำระเงิน (เก็บ slip URL)
+// ==========================================
+model Payment {
+  id        String   @id @default(cuid())
+  orderId   String   @unique
+  slipUrl   String
+  amount    Float
+  note      String?
+  createdAt DateTime @default(now())
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+// ==========================================
+// 10. LessonProgress - ความก้าวหน้าการเรียน
+// ==========================================
+model LessonProgress {
+  id          String   @id @default(cuid())
+  userId      String
+  lessonId    String
+  completed   Boolean  @default(false)
+  completedAt DateTime?
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+  @@index([userId])
+  @@index([lessonId])
+}
