@@ -19,7 +19,8 @@ import Link from "next/link";
 interface OrderItem {
   id: string;
   price: number;
-  course: { title: string };
+  course: { title: string } | null;
+  product: { title: string } | null;
 }
 
 interface Order {
@@ -153,11 +154,11 @@ export default function CheckoutPage() {
             เมื่ออนุมัติแล้วคุณจะสามารถเข้าเรียนได้ทันที
           </p>
           <div className="flex gap-4 justify-center">
-            <Button variant="outline" asChild>
-              <Link href="/courses">ดูคอร์สเพิ่มเติม</Link>
+            <Button variant="outline" onClick={() => router.push("/courses")}>
+              ดูคอร์สเพิ่มเติม
             </Button>
-            <Button asChild>
-              <Link href="/student/orders">ดูประวัติการสั่งซื้อ</Link>
+            <Button onClick={() => router.push("/student/orders")}>
+              ดูประวัติการสั่งซื้อ
             </Button>
           </div>
         </div>
@@ -230,7 +231,7 @@ export default function CheckoutPage() {
             <div className="space-y-2 text-sm">
               {order?.items.map((item) => (
                 <div key={item.id} className="flex justify-between">
-                  <span className="text-gray-600">{item.course.title}</span>
+                  <span className="text-gray-600">{item.course?.title || item.product?.title}</span>
                   <span>{item.price.toLocaleString()} บาท</span>
                 </div>
               ))}

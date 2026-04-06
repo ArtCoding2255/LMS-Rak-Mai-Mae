@@ -5,6 +5,18 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { BookOpen } from "lucide-react";
 
+const levelLabel: Record<string, string> = {
+  BEGINNER: "เริ่มต้น",
+  INTERMEDIATE: "ปานกลาง",
+  ADVANCED: "ขั้นสูง",
+};
+
+const levelColor: Record<string, string> = {
+  BEGINNER: "bg-green-100 text-green-700",
+  INTERMEDIATE: "bg-yellow-100 text-yellow-700",
+  ADVANCED: "bg-red-100 text-red-700",
+};
+
 export const dynamic = 'force-dynamic';
 
 export default async function CoursesPage() {
@@ -48,6 +60,9 @@ export default async function CoursesPage() {
                 <div className="flex items-center gap-2">
                   <Badge variant="secondary">
                     {course._count.lessons} บทเรียน
+                  </Badge>
+                  <Badge className={levelColor[course.level]}>
+                    {levelLabel[course.level]}
                   </Badge>
                 </div>
               </CardContent>

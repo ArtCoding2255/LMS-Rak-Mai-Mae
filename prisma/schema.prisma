@@ -25,15 +25,22 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  cart            Cart?
-  orders          Order[]
-  enrollments     Enrollment[]
-  lessonProgress  LessonProgress[]
+  cart              Cart?
+  orders            Order[]
+  enrollments       Enrollment[]
+  lessonProgress    LessonProgress[]
+  productPurchases  ProductPurchase[]
 }
 
 // ==========================================
 // 2. Course - คอร์สเรียน
 // ==========================================
+enum Level {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
 model Course {
   id          String   @id @default(cuid())
   title       String
@@ -41,6 +48,7 @@ model Course {
   description String
   price       Float
   imageUrl    String?
+  level       Level    @default(BEGINNER)
   published   Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -123,13 +131,15 @@ model Order {
 // 6. OrderItem - รายการสินค้าในคำสั่งซื้อ
 // ==========================================
 model OrderItem {
-  id       String @id @default(cuid())
-  orderId  String
-  courseId  String
-  price    Float
+  id        String  @id @default(cuid())
+  orderId   String
+  courseId   String?
+  productId String?
+  price     Float
 
-  order  Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  order   Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  course  Course?  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@index([orderId])
 }
@@ -149,14 +159,17 @@ model Cart {
 // 8. CartItem - รายการในตะกร้า
 // ==========================================
 model CartItem {
-  id       String @id @default(cuid())
-  cartId   String
-  courseId  String
+  id        String  @id @default(cuid())
+  cartId    String
+  courseId   String?
+  productId String?
 
-  cart   Cart   @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  cart    Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  course  Course?  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@unique([cartId, courseId])
+  @@unique([cartId, productId])
   @@index([cartId])
 }
 
@@ -175,7 +188,44 @@ model Payment {
 }
 
 // ==========================================
-// 10. LessonProgress - ความก้าวหน้าการเรียน
+// 10. Product - สินค้าดิจิทัล (ไฟล์ PDF)
+// ==========================================
+model Product {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String
+  price       Float
+  imageUrl    String?
+  pdfUrl      String
+  published   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  orderItems  OrderItem[]
+  cartItems   CartItem[]
+  purchases   ProductPurchase[]
+}
+
+// ==========================================
+// 11. ProductPurchase - การซื้อสินค้าดิจิทัล
+// ==========================================
+model ProductPurchase {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@index([userId])
+  @@index([productId])
+}
+
+// ==========================================
+// 12. LessonProgress - ความก้าวหน้าการเรียน
 // ==========================================
 model LessonProgress {
   id          String   @id @default(cuid())

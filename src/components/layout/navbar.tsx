@@ -18,6 +18,7 @@ import { useCart } from "@/components/providers/cart-provider";
 const navLinks = [
   { href: "/", label: "หน้าแรก" },
   { href: "/courses", label: "คอร์สทั้งหมด" },
+  { href: "/products", label: "โครเชต์แพทเทิร์น" },
   { href: "/about", label: "เกี่ยวกับเรา" },
   { href: "/contact", label: "ติดต่อเรา" },
 ];

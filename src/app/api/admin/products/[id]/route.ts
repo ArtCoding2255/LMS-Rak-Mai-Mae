@@ -13,23 +13,23 @@ export async function PUT(
     }
 
     const { id } = await params;
-    const { title, slug, description, price, imageUrl, level, published } = await request.json();
+    const { title, slug, description, price, imageUrl, pdfUrl, published } = await request.json();
 
-    const existing = await db.course.findFirst({
+    const existing = await db.product.findFirst({
       where: { slug, NOT: { id } },
     });
     if (existing) {
       return NextResponse.json({ error: "Slug นี้ถูกใช้แล้ว" }, { status: 400 });
     }
 
-    const course = await db.course.update({
+    const product = await db.product.update({
       where: { id },
-      data: { title, slug, description, price, imageUrl, level, published },
+      data: { title, slug, description, price, imageUrl, pdfUrl, published },
     });
 
-    return NextResponse.json(course);
+    return NextResponse.json(product);
   } catch (error) {
-    console.error("Update course error:", error);
+    console.error("Update product error:", error);
     return NextResponse.json({ error: "เกิดข้อผิดพลาด" }, { status: 500 });
   }
 }
@@ -45,11 +45,11 @@ export async function DELETE(
     }
 
     const { id } = await params;
-    await db.course.delete({ where: { id } });
+    await db.product.delete({ where: { id } });
 
-    return NextResponse.json({ message: "ลบคอร์สเรียบร้อย" });
+    return NextResponse.json({ message: "ลบสินค้าเรียบร้อย" });
   } catch (error) {
-    console.error("Delete course error:", error);
+    console.error("Delete product error:", error);
     return NextResponse.json({ error: "เกิดข้อผิดพลาด" }, { status: 500 });
   }
 }

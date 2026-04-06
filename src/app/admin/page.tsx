@@ -1,16 +1,17 @@
 import { db } from "@/lib/db";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BookOpen, Users, ClipboardList, CreditCard } from "lucide-react";
+import { BookOpen, Users, ClipboardList, CreditCard, FileText } from "lucide-react";
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminDashboardPage() {
-  const [totalCourses, totalStudents, totalEnrollments, pendingPayments] =
+  const [totalCourses, totalStudents, totalEnrollments, pendingPayments, totalProducts] =
     await Promise.all([
       db.course.count(),
       db.user.count({ where: { role: "STUDENT" } }),
       db.enrollment.count(),
       db.order.count({ where: { status: "PENDING" } }),
+      db.product.count(),
     ]);
 
   const stats = [
@@ -20,6 +21,13 @@ export default async function AdminDashboardPage() {
       icon: BookOpen,
       color: "text-blue-600",
       bg: "bg-blue-100",
+    },
+    {
+      title: "โครเชต์แพทเทิร์น",
+      value: totalProducts,
+      icon: FileText,
+      color: "text-purple-600",
+      bg: "bg-purple-100",
     },
     {
       title: "นักเรียนทั้งหมด",
@@ -56,7 +64,7 @@ export default async function AdminDashboardPage() {
       <h1 className="text-2xl font-bold mb-6">แดชบอร์ด</h1>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
         {stats.map((stat) => (
           <Card key={stat.title}>
             <CardContent className="flex items-center gap-4 pt-6">

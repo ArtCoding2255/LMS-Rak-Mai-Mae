@@ -9,12 +9,14 @@ import {
   Users,
   ClipboardList,
   CreditCard,
+  FileText,
   ArrowLeft,
 } from "lucide-react";
 
 const menuItems = [
   { href: "/admin", label: "แดชบอร์ด", icon: LayoutDashboard },
   { href: "/admin/courses", label: "จัดการคอร์ส", icon: BookOpen },
+  { href: "/admin/products", label: "โครเชต์แพทเทิร์น", icon: FileText },
   { href: "/admin/users", label: "จัดการผู้ใช้", icon: Users },
   { href: "/admin/enrollments", label: "การลงทะเบียน", icon: ClipboardList },
   { href: "/admin/orders", label: "คำสั่งซื้อ/ชำระเงิน", icon: CreditCard },

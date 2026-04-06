@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { ShoppingCart, Trash2, BookOpen, ArrowRight } from "lucide-react";
+import { ShoppingCart, Trash2, BookOpen, FileText, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { useCart } from "@/components/providers/cart-provider";
 
@@ -18,7 +18,14 @@ interface CartItem {
     slug: string;
     price: number;
     imageUrl: string | null;
-  };
+  } | null;
+  product: {
+    id: string;
+    title: string;
+    slug: string;
+    price: number;
+    imageUrl: string | null;
+  } | null;
 }
 
 interface Cart {
@@ -49,13 +56,18 @@ export default function CartPage() {
     fetchCart();
   }, []);
 
-  const handleRemove = async (courseId: string) => {
-    setRemoving(courseId);
+  const handleRemove = async (item: CartItem) => {
+    const itemId = item.course?.id || item.product?.id;
+    setRemoving(itemId || null);
     try {
+      const body = item.course
+        ? { courseId: item.course.id }
+        : { productId: item.product!.id };
+
       const res = await fetch("/api/cart", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ courseId }),
+        body: JSON.stringify(body),
       });
       if (res.ok) {
         fetchCart();
@@ -68,7 +80,13 @@ export default function CartPage() {
     }
   };
 
-  const total = cart?.items.reduce((sum, item) => sum + item.course.price, 0) ?? 0;
+  const getItemTitle = (item: CartItem) => item.course?.title || item.product?.title || "";
+  const getItemPrice = (item: CartItem) => item.course?.price || item.product?.price || 0;
+  const getItemSlug = (item: CartItem) =>
+    item.course ? `/courses/${item.course.slug}` : `/products/${item.product!.slug}`;
+  const getItemId = (item: CartItem) => item.course?.id || item.product?.id || "";
+
+  const total = cart?.items.reduce((sum, item) => sum + getItemPrice(item), 0) ?? 0;
 
   if (loading) {
     return (
@@ -93,10 +111,15 @@ export default function CartPage() {
           <h2 className="text-xl font-semibold text-gray-500 mb-2">
             ตะกร้าว่างเปล่า
           </h2>
-          <p className="text-gray-400 mb-6">ยังไม่มีคอร์สในตะกร้า</p>
-          <Button asChild>
-            <Link href="/courses">ดูคอร์สทั้งหมด</Link>
-          </Button>
+          <p className="text-gray-400 mb-6">ยังไม่มีสินค้าในตะกร้า</p>
+          <div className="flex gap-3 justify-center">
+            <Button asChild>
+              <Link href="/courses">ดูคอร์สทั้งหมด</Link>
+            </Button>
+            <Button variant="outline" asChild>
+              <Link href="/products">ดูโครเชต์แพทเทิร์น</Link>
+            </Button>
+          </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -105,25 +128,36 @@ export default function CartPage() {
             {cart.items.map((item) => (
               <Card key={item.id} className="p-4">
                 <div className="flex items-center gap-4">
-                  <div className="w-20 h-20 bg-gradient-to-br from-nude-light to-brand/10 rounded-lg flex items-center justify-center shrink-0">
-                    <BookOpen className="h-8 w-8 text-brand-light" />
+                  <div className={`w-20 h-20 rounded-lg flex items-center justify-center shrink-0 ${
+                    item.course
+                      ? "bg-gradient-to-br from-nude-light to-brand/10"
+                      : "bg-gradient-to-br from-purple-50 to-brand/10"
+                  }`}>
+                    {item.course ? (
+                      <BookOpen className="h-8 w-8 text-brand-light" />
+                    ) : (
+                      <FileText className="h-8 w-8 text-purple-400" />
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <Link
-                      href={`/courses/${item.course.slug}`}
+                      href={getItemSlug(item)}
                       className="font-semibold hover:text-brand-dark transition-colors line-clamp-1"
                     >
-                      {item.course.title}
+                      {getItemTitle(item)}
                     </Link>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      {item.course ? "คอร์สเรียน" : "โครเชต์แพทเทิร์น (PDF)"}
+                    </p>
                     <p className="text-lg font-bold text-brand-dark mt-1">
-                      {item.course.price.toLocaleString()} บาท
+                      {getItemPrice(item).toLocaleString()} บาท
                     </p>
                   </div>
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => handleRemove(item.course.id)}
-                    disabled={removing === item.course.id}
+                    onClick={() => handleRemove(item)}
+                    disabled={removing === getItemId(item)}
                     className="text-red-500 hover:text-red-700 hover:bg-red-50"
                   >
                     <Trash2 className="h-5 w-5" />
@@ -141,9 +175,9 @@ export default function CartPage() {
                 {cart.items.map((item) => (
                   <div key={item.id} className="flex justify-between">
                     <span className="text-gray-600 truncate mr-2">
-                      {item.course.title}
+                      {getItemTitle(item)}
                     </span>
-                    <span>{item.course.price.toLocaleString()} บาท</span>
+                    <span>{getItemPrice(item).toLocaleString()} บาท</span>
                   </div>
                 ))}
               </div>

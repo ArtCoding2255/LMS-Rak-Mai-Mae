@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 
-// POST /api/admin/orders/[id]/approve - อนุมัติ Order + สร้าง Enrollment
+// POST /api/admin/orders/[id]/approve - อนุมัติ Order + สร้าง Enrollment/ProductPurchase
 export async function POST(
   _req: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -30,7 +30,7 @@ export async function POST(
     );
   }
 
-  // อนุมัติ Order + สร้าง Enrollment ให้ทุกคอร์สใน Order
+  // อนุมัติ Order + สร้าง Enrollment/ProductPurchase
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   await db.$transaction(async (tx: any) => {
     await tx.order.update({
@@ -38,24 +38,43 @@ export async function POST(
       data: { status: "APPROVED" },
     });
 
-    // สร้าง Enrollment สำหรับแต่ละคอร์ส
     for (const item of order.items) {
-      await tx.enrollment.upsert({
-        where: {
-          userId_courseId: {
+      // สร้าง Enrollment สำหรับคอร์ส
+      if (item.courseId) {
+        await tx.enrollment.upsert({
+          where: {
+            userId_courseId: {
+              userId: order.userId,
+              courseId: item.courseId,
+            },
+          },
+          create: {
             userId: order.userId,
             courseId: item.courseId,
+            status: "ACTIVE",
           },
-        },
-        create: {
-          userId: order.userId,
-          courseId: item.courseId,
-          status: "ACTIVE",
-        },
-        update: {
-          status: "ACTIVE",
-        },
-      });
+          update: {
+            status: "ACTIVE",
+          },
+        });
+      }
+
+      // สร้าง ProductPurchase สำหรับสินค้าดิจิทัล
+      if (item.productId) {
+        await tx.productPurchase.upsert({
+          where: {
+            userId_productId: {
+              userId: order.userId,
+              productId: item.productId,
+            },
+          },
+          create: {
+            userId: order.userId,
+            productId: item.productId,
+          },
+          update: {},
+        });
+      }
     }
   });
 

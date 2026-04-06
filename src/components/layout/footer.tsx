@@ -42,9 +42,16 @@ export function Footer() {
           <div>
             <h4 className="font-semibold mb-3">ติดต่อเรา</h4>
             <ul className="space-y-2 text-sm text-gray-600">
-              <li>Email: hello@rakmaemae.com</li>
-              <li>โทร: 089-xxx-xxxx</li>
-              <li>Line: @rakmaemae</li>
+              <li>
+                <a href="https://lin.ee/oxHGACz" target="_blank" rel="noopener noreferrer" className="hover:text-brand-dark">
+                  Line: ติดต่อเรา
+                </a>
+              </li>
+              <li>
+                <a href="https://www.facebook.com/Yarn.by.kuikui/" target="_blank" rel="noopener noreferrer" className="hover:text-brand-dark">
+                  Facebook: ไหมพรมราคาถูก รักไหมแม่ Yarn by Kuikui
+                </a>
+              </li>
             </ul>
           </div>
         </div>

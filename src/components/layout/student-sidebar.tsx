@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
   BookOpen,
+  FileText,
   ShoppingBag,
   ArrowLeft,
 } from "lucide-react";
@@ -13,6 +14,7 @@ import {
 const menuItems = [
   { href: "/student", label: "แดชบอร์ด", icon: LayoutDashboard },
   { href: "/student/courses", label: "คอร์สของฉัน", icon: BookOpen },
+  { href: "/student/products", label: "โครเชต์แพทเทิร์นของฉัน", icon: FileText },
   { href: "/student/orders", label: "ประวัติการสั่งซื้อ", icon: ShoppingBag },
 ];
 

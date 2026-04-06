@@ -22,7 +22,7 @@ export default async function AdminOrdersPage() {
   const orders = await db.order.findMany({
     include: {
       user: { select: { name: true, email: true } },
-      items: { include: { course: { select: { title: true } } } },
+      items: { include: { course: { select: { title: true } }, product: { select: { title: true } } } },
       payment: true,
     },
     orderBy: { createdAt: "desc" },
@@ -41,7 +41,7 @@ export default async function AdminOrdersPage() {
               <TableRow>
                 <TableHead>รหัส</TableHead>
                 <TableHead>ลูกค้า</TableHead>
-                <TableHead>คอร์ส</TableHead>
+                <TableHead>รายการ</TableHead>
                 <TableHead>ยอดรวม</TableHead>
                 <TableHead>สลิป</TableHead>
                 <TableHead>สถานะ</TableHead>
@@ -69,7 +69,7 @@ export default async function AdminOrdersPage() {
                       <div className="space-y-1">
                         {order.items.map((item) => (
                           <p key={item.id} className="text-sm">
-                            {item.course.title}
+                            {item.course?.title || item.product?.title}
                           </p>
                         ))}
                       </div>

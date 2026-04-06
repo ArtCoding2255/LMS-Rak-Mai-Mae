@@ -28,7 +28,7 @@ export default async function StudentOrdersPage() {
   const orders = await db.order.findMany({
     where: { userId: session.user.id },
     include: {
-      items: { include: { course: { select: { title: true } } } },
+      items: { include: { course: { select: { title: true } }, product: { select: { title: true } } } },
       payment: true,
     },
     orderBy: { createdAt: "desc" },
@@ -49,7 +49,7 @@ export default async function StudentOrdersPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>รหัสคำสั่งซื้อ</TableHead>
-                <TableHead>คอร์ส</TableHead>
+                <TableHead>รายการ</TableHead>
                 <TableHead>ยอดรวม</TableHead>
                 <TableHead>สลิป</TableHead>
                 <TableHead>สถานะ</TableHead>
@@ -68,7 +68,7 @@ export default async function StudentOrdersPage() {
                       <div className="space-y-1">
                         {order.items.map((item) => (
                           <p key={item.id} className="text-sm">
-                            {item.course.title}
+                            {item.course?.title || item.product?.title}
                           </p>
                         ))}
                       </div>

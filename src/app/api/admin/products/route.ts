@@ -9,24 +9,24 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "ไม่มีสิทธิ์" }, { status: 403 });
     }
 
-    const { title, slug, description, price, imageUrl, level, published } = await request.json();
+    const { title, slug, description, price, imageUrl, pdfUrl, published } = await request.json();
 
-    if (!title || !slug || !description || price === undefined) {
+    if (!title || !slug || !description || price === undefined || !pdfUrl) {
       return NextResponse.json({ error: "กรุณากรอกข้อมูลให้ครบ" }, { status: 400 });
     }
 
-    const existing = await db.course.findUnique({ where: { slug } });
+    const existing = await db.product.findUnique({ where: { slug } });
     if (existing) {
       return NextResponse.json({ error: "Slug นี้ถูกใช้แล้ว" }, { status: 400 });
     }
 
-    const course = await db.course.create({
-      data: { title, slug, description, price, imageUrl, level, published: published || false },
+    const product = await db.product.create({
+      data: { title, slug, description, price, imageUrl, pdfUrl, published: published || false },
     });
 
-    return NextResponse.json(course, { status: 201 });
+    return NextResponse.json(product, { status: 201 });
   } catch (error) {
-    console.error("Create course error:", error);
+    console.error("Create product error:", error);
     return NextResponse.json({ error: "เกิดข้อผิดพลาด" }, { status: 500 });
   }
 }

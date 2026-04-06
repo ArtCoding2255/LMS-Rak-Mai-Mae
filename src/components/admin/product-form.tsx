@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 
-interface CourseFormProps {
+interface ProductFormProps {
   initialData?: {
     id: string;
     title: string;
@@ -17,12 +17,12 @@ interface CourseFormProps {
     description: string;
     price: number;
     imageUrl: string | null;
-    level: string;
+    pdfUrl: string;
     published: boolean;
   };
 }
 
-export function CourseForm({ initialData }: CourseFormProps) {
+export function ProductForm({ initialData }: ProductFormProps) {
   const router = useRouter();
   const isEditing = !!initialData;
 
@@ -31,11 +31,10 @@ export function CourseForm({ initialData }: CourseFormProps) {
   const [description, setDescription] = useState(initialData?.description || "");
   const [price, setPrice] = useState(initialData?.price?.toString() || "");
   const [imageUrl, setImageUrl] = useState(initialData?.imageUrl || "");
-  const [level, setLevel] = useState(initialData?.level || "BEGINNER");
+  const [pdfUrl, setPdfUrl] = useState(initialData?.pdfUrl || "");
   const [published, setPublished] = useState(initialData?.published || false);
   const [loading, setLoading] = useState(false);
 
-  // สร้าง slug อัตโนมัติจากชื่อ
   const generateSlug = (text: string) => {
     return text
       .toLowerCase()
@@ -59,8 +58,8 @@ export function CourseForm({ initialData }: CourseFormProps) {
 
     try {
       const url = isEditing
-        ? `/api/admin/courses/${initialData.id}`
-        : "/api/admin/courses";
+        ? `/api/admin/products/${initialData.id}`
+        : "/api/admin/products";
       const method = isEditing ? "PUT" : "POST";
 
       const res = await fetch(url, {
@@ -72,7 +71,7 @@ export function CourseForm({ initialData }: CourseFormProps) {
           description,
           price: parseFloat(price),
           imageUrl: imageUrl || null,
-          level,
+          pdfUrl,
           published,
         }),
       });
@@ -84,8 +83,8 @@ export function CourseForm({ initialData }: CourseFormProps) {
         return;
       }
 
-      toast.success(isEditing ? "อัปเดตคอร์สเรียบร้อย" : "สร้างคอร์สเรียบร้อย");
-      router.push("/admin/courses");
+      toast.success(isEditing ? "อัปเดตสินค้าเรียบร้อย" : "สร้างสินค้าเรียบร้อย");
+      router.push("/admin/products");
       router.refresh();
     } catch {
       toast.error("เกิดข้อผิดพลาด กรุณาลองใหม่");
@@ -97,17 +96,17 @@ export function CourseForm({ initialData }: CourseFormProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{isEditing ? "แก้ไขคอร์ส" : "สร้างคอร์สใหม่"}</CardTitle>
+        <CardTitle>{isEditing ? "แก้ไขสินค้า" : "เพิ่มสินค้าใหม่"}</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="title">ชื่อคอร์ส</Label>
+            <Label htmlFor="title">ชื่อสินค้า</Label>
             <Input
               id="title"
               value={title}
               onChange={(e) => handleTitleChange(e.target.value)}
-              placeholder="เช่น โครเชต์เบื้องต้น"
+              placeholder="เช่น แพทเทิร์นกระเป๋าโครเชต์"
               required
             />
           </div>
@@ -118,21 +117,21 @@ export function CourseForm({ initialData }: CourseFormProps) {
               id="slug"
               value={slug}
               onChange={(e) => setSlug(e.target.value)}
-              placeholder="crochet-basics"
+              placeholder="crochet-bag-pattern"
               required
             />
             <p className="text-xs text-gray-500">
-              ใช้สำหรับ URL เช่น /courses/{slug || "xxx"}
+              ใช้สำหรับ URL เช่น /products/{slug || "xxx"}
             </p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">รายละเอียดคอร์ส</Label>
+            <Label htmlFor="description">รายละเอียดสินค้า</Label>
             <Textarea
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="อธิบายรายละเอียดคอร์ส..."
+              placeholder="อธิบายรายละเอียดสินค้า..."
               rows={4}
               required
             />
@@ -147,23 +146,9 @@ export function CourseForm({ initialData }: CourseFormProps) {
               step="1"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
-              placeholder="590"
+              placeholder="199"
               required
             />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="level">ระดับความยาก</Label>
-            <select
-              id="level"
-              value={level}
-              onChange={(e) => setLevel(e.target.value)}
-              className="flex h-10 w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm text-foreground"
-            >
-              <option value="BEGINNER">เริ่มต้น</option>
-              <option value="INTERMEDIATE">ปานกลาง</option>
-              <option value="ADVANCED">ขั้นสูง</option>
-            </select>
           </div>
 
           <div className="space-y-2">
@@ -175,13 +160,27 @@ export function CourseForm({ initialData }: CourseFormProps) {
               placeholder="https://... หรือ /uploads/cover.jpg"
             />
             <p className="text-xs text-gray-500">
-              ไม่บังคับ — ใช้แสดงเป็นรูปปกคอร์สในหน้าเว็บ
+              ไม่บังคับ — ใช้แสดงเป็นรูปปกสินค้าในหน้าเว็บ
             </p>
             {imageUrl && (
               <div className="mt-2 border rounded-lg overflow-hidden w-48 h-28">
                 <img src={imageUrl} alt="ตัวอย่างรูปปก" className="w-full h-full object-cover" />
               </div>
             )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="pdfUrl">ลิงก์ไฟล์ PDF</Label>
+            <Input
+              id="pdfUrl"
+              value={pdfUrl}
+              onChange={(e) => setPdfUrl(e.target.value)}
+              placeholder="https://... หรือ /uploads/pattern.pdf"
+              required
+            />
+            <p className="text-xs text-gray-500">
+              URL ของไฟล์ PDF ที่ลูกค้าจะได้รับหลังซื้อ
+            </p>
           </div>
 
           <div className="flex items-center gap-2">
@@ -192,7 +191,7 @@ export function CourseForm({ initialData }: CourseFormProps) {
               onChange={(e) => setPublished(e.target.checked)}
               className="h-4 w-4 rounded border-gray-300"
             />
-            <Label htmlFor="published">เผยแพร่คอร์สนี้</Label>
+            <Label htmlFor="published">เผยแพร่สินค้านี้</Label>
           </div>
 
           <div className="flex gap-3 pt-4">
@@ -200,13 +199,13 @@ export function CourseForm({ initialData }: CourseFormProps) {
               {loading
                 ? "กำลังบันทึก..."
                 : isEditing
-                ? "อัปเดตคอร์ส"
-                : "สร้างคอร์ส"}
+                ? "อัปเดตสินค้า"
+                : "สร้างสินค้า"}
             </Button>
             <Button
               type="button"
               variant="outline"
-              onClick={() => router.push("/admin/courses")}
+              onClick={() => router.push("/admin/products")}
             >
               ยกเลิก
             </Button>

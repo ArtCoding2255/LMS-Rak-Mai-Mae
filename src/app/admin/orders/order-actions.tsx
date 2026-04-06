@@ -23,11 +23,11 @@ export function OrderActions({ orderId }: { orderId: string }) {
         return;
       }
 
-      toast.success(
-        action === "approve"
-          ? "อนุมัติการชำระเงินแล้ว"
-          : "ปฏิเสธการชำระเงินแล้ว"
-      );
+      if (action === "approve") {
+        toast.success("อนุมัติการชำระเงินแล้ว");
+      } else {
+        toast.error("ปฏิเสธการชำระเงินแล้ว");
+      }
       router.refresh();
     } catch {
       toast.error("เกิดข้อผิดพลาด");
