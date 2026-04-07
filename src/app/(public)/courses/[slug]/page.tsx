@@ -65,7 +65,7 @@ export default async function CourseDetailPage({
             </Badge>
           </div>
 
-          <p className="text-gray-600 leading-relaxed mb-8">
+          <p className="text-gray-600 leading-relaxed mb-8 whitespace-pre-line">
             {course.description}
           </p>
 
