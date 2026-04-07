@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
+import { randomBytes } from "crypto";
 import { db } from "@/lib/db";
+import { sendPasswordResetEmail } from "@/lib/email";
 
 export async function POST(request: Request) {
   try {
@@ -12,17 +14,29 @@ export async function POST(request: Request) {
       );
     }
 
-    // ตรวจสอบว่ามี user อยู่จริง
     const user = await db.user.findUnique({
       where: { email },
     });
 
     // ส่ง response เหมือนกันไม่ว่าจะเจอ user หรือไม่ (เพื่อความปลอดภัย)
-    // ในอนาคตสามารถเพิ่มการส่งอีเมลจริงได้
     if (user) {
-      // TODO: ส่งอีเมล reset password จริง
-      // สามารถใช้ Resend, SendGrid หรือ Nodemailer ได้
-      console.log(`Password reset requested for: ${email}`);
+      // ลบ token เก่าของ email นี้
+      await db.passwordResetToken.deleteMany({
+        where: { email },
+      });
+
+      // สร้าง token ใหม่ หมดอายุใน 1 ชั่วโมง
+      const token = randomBytes(32).toString("hex");
+      await db.passwordResetToken.create({
+        data: {
+          email,
+          token,
+          expiresAt: new Date(Date.now() + 60 * 60 * 1000),
+        },
+      });
+
+      // ส่งอีเมล
+      await sendPasswordResetEmail(email, token);
     }
 
     return NextResponse.json({

@@ -11,13 +11,13 @@ async function main() {
   // ==========================================
   // สร้าง Admin
   // ==========================================
-  const adminPassword = await bcrypt.hash("admin123", 10);
+  const adminPassword = await bcrypt.hash("RakMaeMae@2026!", 10);
   const admin = await prisma.user.upsert({
-    where: { email: "test@test.com" },
+    where: { email: "admin@rakmaemae.com" },
     update: {},
     create: {
       name: "Admin",
-      email: "test@test.com",
+      email: "admin@rakmaemae.com",
       password: adminPassword,
       role: "ADMIN",
     },
@@ -297,7 +297,7 @@ async function main() {
   console.log("✅ สร้างตะกร้าให้นักเรียนทุกคน");
 
   console.log("\n🎉 สร้างข้อมูลตัวอย่างเสร็จสมบูรณ์!");
-  console.log("📧 Admin: test@test.com / admin123");
+  console.log("📧 Admin: admin@rakmaemae.com / RakMaeMae@2026!");
   console.log("📧 นักเรียน: somchai@example.com / student123");
   console.log("📧 นักเรียน: somying@example.com / student123");
   console.log("📧 นักเรียน: manee@example.com / student123");

@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
+import { put } from "@vercel/blob";
 import crypto from "crypto";
 
 // POST /api/upload - อัปโหลดไฟล์ (สลิปโอนเงิน, รูปคอร์ส)
@@ -35,22 +34,14 @@ export async function POST(req: Request) {
     );
   }
 
-  const bytes = await file.arrayBuffer();
-  const buffer = Buffer.from(bytes);
-
   // สร้างชื่อไฟล์ที่ไม่ซ้ำกัน
   const ext = file.name.split(".").pop() || "jpg";
-  const filename = `${crypto.randomUUID()}.${ext}`;
+  const filename = `uploads/${crypto.randomUUID()}.${ext}`;
 
-  // สร้างโฟลเดอร์ uploads ถ้ายังไม่มี
-  const uploadDir = path.join(process.cwd(), "public", "uploads");
-  await mkdir(uploadDir, { recursive: true });
+  // อัปโหลดไปยัง Vercel Blob
+  const blob = await put(filename, file, {
+    access: "public",
+  });
 
-  // บันทึกไฟล์
-  const filepath = path.join(uploadDir, filename);
-  await writeFile(filepath, buffer);
-
-  const url = `/uploads/${filename}`;
-
-  return NextResponse.json({ url });
+  return NextResponse.json({ url: blob.url });
 }
