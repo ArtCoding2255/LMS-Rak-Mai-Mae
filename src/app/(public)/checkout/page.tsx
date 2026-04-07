@@ -186,7 +186,7 @@ export default function CheckoutPage() {
         <div>
           <Card className="p-6">
             <h2 className="text-lg font-bold mb-4">
-              ข้อมูลการโอนเงิน (PromptPay)
+              ข้อมูลการโอนเงินผ่านบัญชีธนาคาร
             </h2>
 
             <div className="bg-nude-light rounded-lg p-6 text-center mb-6">
@@ -206,18 +206,18 @@ export default function CheckoutPage() {
               <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                 <div>
                   <p className="text-sm text-gray-500">ชื่อบัญชี</p>
-                  <p className="font-medium">Grandma Crochet Studio</p>
+                  <p className="font-medium">รักไหมแม่</p>
                 </div>
               </div>
               <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                 <div>
                   <p className="text-sm text-gray-500">เลขบัญชี</p>
-                  <p className="font-medium font-mono">xxx-x-xxxxx-x</p>
+                  <p className="font-medium font-mono">227-3-56279-9</p>
                 </div>
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => copyToClipboard("xxx-x-xxxxx-x")}
+                  onClick={() => copyToClipboard("2273562799")}
                 >
                   <Copy className="h-4 w-4" />
                 </Button>
