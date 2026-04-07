@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Heart, Star, Users } from "lucide-react";
+import { Heart, Users } from "lucide-react";
 
 export default function AboutPage() {
   return (
@@ -40,7 +40,7 @@ export default function AboutPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
         <Card className="text-center">
           <CardContent className="pt-6">
             <Heart className="h-8 w-8 text-romantic-dark mx-auto mb-3" />
@@ -53,13 +53,6 @@ export default function AboutPage() {
             <Users className="h-8 w-8 text-blue-500 mx-auto mb-3" />
             <div className="text-3xl font-bold text-brand-dark mb-1">500+</div>
             <p className="text-gray-600">นักเรียนที่เรียนกับเรา</p>
-          </CardContent>
-        </Card>
-        <Card className="text-center">
-          <CardContent className="pt-6">
-            <Star className="h-8 w-8 text-yellow-500 mx-auto mb-3" />
-            <div className="text-3xl font-bold text-brand-dark mb-1">4.9</div>
-            <p className="text-gray-600">คะแนนรีวิวเฉลี่ย</p>
           </CardContent>
         </Card>
       </div>

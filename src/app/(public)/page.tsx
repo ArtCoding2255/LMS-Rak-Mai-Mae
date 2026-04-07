@@ -84,7 +84,7 @@ export default function HomePage() {
           <h2 className="text-3xl font-bold mb-4">
             พร้อมเริ่มต้นถักโครเชต์แล้วหรือยัง?
           </h2>
-          <p className="text-brand-light mb-8 max-w-xl mx-auto">
+          <p className="text-white mb-8 max-w-xl mx-auto">
             สมัครสมาชิกวันนี้ แล้วเริ่มเรียนรู้ทักษะใหม่ที่จะเปลี่ยนเวลาว่างของคุณให้เป็นผลงานสุดภาคภูมิใจ
           </p>
           <Button size="lg" variant="secondary" asChild>
