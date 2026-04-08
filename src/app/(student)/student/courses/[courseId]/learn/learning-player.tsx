@@ -11,6 +11,7 @@ import {
   Menu,
   X,
   ArrowLeft,
+  MessageCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -255,6 +256,18 @@ export function LearningPlayer({
               </p>
             </div>
           )}
+
+          <div className="mt-4 flex justify-end">
+            <a
+              href="https://lin.ee/oxHGACz"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium bg-green-50 text-green-700 hover:bg-green-100 transition-colors"
+            >
+              <MessageCircle className="h-4 w-4" />
+              ปรึกษาคุณครู
+            </a>
+          </div>
         </div>
       </div>
     </div>

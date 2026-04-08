@@ -9,6 +9,7 @@ import {
   FileText,
   ShoppingBag,
   ArrowLeft,
+  MessageCircle,
 } from "lucide-react";
 
 const menuItems = [
@@ -58,6 +59,18 @@ export function StudentSidebar() {
           );
         })}
       </nav>
+
+      <div className="mt-6 px-1">
+        <a
+          href="https://lin.ee/oxHGACz"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium bg-green-50 text-green-700 hover:bg-green-100 transition-colors"
+        >
+          <MessageCircle className="h-4 w-4" />
+          ปรึกษาคุณครู
+        </a>
+      </div>
     </aside>
   );
 }

@@ -401,6 +401,10 @@ export default function CheckoutPage() {
                 />
               </div>
             </div>
+
+            <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-800">
+              กรุณาตรวจสอบชื่อผู้รับ เบอร์โทรศัพท์ และที่อยู่จัดส่งให้ถูกต้องครบถ้วนก่อนยืนยันการชำระเงิน เพื่อป้องกันปัญหาในการจัดส่งสินค้า
+            </div>
           </Card>
 
           <Card className="p-6">
