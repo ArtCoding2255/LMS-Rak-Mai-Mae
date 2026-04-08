@@ -302,7 +302,7 @@ export default function CheckoutPage() {
                     id="shippingName"
                     placeholder="ชื่อ-นามสกุล ผู้รับสินค้า"
                     value={shipping.shippingName}
-                    onChange={(e) => setShipping({ ...shipping, shippingName: e.target.value })}
+                    onChange={(e) => setShipping(prev => ({ ...prev, shippingName: e.target.value }))}
                     required
                   />
                 </div>
@@ -313,7 +313,7 @@ export default function CheckoutPage() {
                     placeholder="0812345678"
                     value={shipping.shippingPhone}
                     onChange={(e) => {
-                      setShipping({ ...shipping, shippingPhone: e.target.value });
+                      setShipping(prev => ({ ...prev, shippingPhone: e.target.value }));
                       if (phoneError) setPhoneError(validatePhone(e.target.value));
                     }}
                     required
@@ -329,7 +329,7 @@ export default function CheckoutPage() {
                     id="shippingHouseNo"
                     placeholder="เลขที่บ้าน / ซอย / ถนน"
                     value={shipping.shippingHouseNo}
-                    onChange={(e) => setShipping({ ...shipping, shippingHouseNo: e.target.value })}
+                    onChange={(e) => setShipping(prev => ({ ...prev, shippingHouseNo: e.target.value }))}
                     required
                   />
                 </div>
@@ -339,7 +339,7 @@ export default function CheckoutPage() {
                     id="shippingMoo"
                     placeholder="หมู่ที่ (ถ้ามี)"
                     value={shipping.shippingMoo}
-                    onChange={(e) => setShipping({ ...shipping, shippingMoo: e.target.value })}
+                    onChange={(e) => setShipping(prev => ({ ...prev, shippingMoo: e.target.value }))}
                   />
                 </div>
               </div>
@@ -351,7 +351,7 @@ export default function CheckoutPage() {
                     id="shippingSubdistrict"
                     placeholder="ตำบล / แขวง"
                     value={shipping.shippingSubdistrict}
-                    onChange={(e) => setShipping({ ...shipping, shippingSubdistrict: e.target.value })}
+                    onChange={(e) => setShipping(prev => ({ ...prev, shippingSubdistrict: e.target.value }))}
                     required
                   />
                 </div>
@@ -361,7 +361,7 @@ export default function CheckoutPage() {
                     id="shippingDistrict"
                     placeholder="อำเภอ / เขต"
                     value={shipping.shippingDistrict}
-                    onChange={(e) => setShipping({ ...shipping, shippingDistrict: e.target.value })}
+                    onChange={(e) => setShipping(prev => ({ ...prev, shippingDistrict: e.target.value }))}
                     required
                   />
                 </div>
@@ -374,7 +374,7 @@ export default function CheckoutPage() {
                     id="shippingProvince"
                     placeholder="จังหวัด"
                     value={shipping.shippingProvince}
-                    onChange={(e) => setShipping({ ...shipping, shippingProvince: e.target.value })}
+                    onChange={(e) => setShipping(prev => ({ ...prev, shippingProvince: e.target.value }))}
                     required
                   />
                 </div>
@@ -384,7 +384,7 @@ export default function CheckoutPage() {
                     id="shippingPostalCode"
                     placeholder="รหัสไปรษณีย์ 5 หลัก"
                     value={shipping.shippingPostalCode}
-                    onChange={(e) => setShipping({ ...shipping, shippingPostalCode: e.target.value })}
+                    onChange={(e) => setShipping(prev => ({ ...prev, shippingPostalCode: e.target.value }))}
                     required
                   />
                 </div>
@@ -397,7 +397,7 @@ export default function CheckoutPage() {
                   className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   placeholder="รายละเอียดเพิ่มเติม เช่น จุดสังเกต เวลาที่สะดวกรับสินค้า"
                   value={shipping.shippingNote}
-                  onChange={(e) => setShipping({ ...shipping, shippingNote: e.target.value })}
+                  onChange={(e) => setShipping(prev => ({ ...prev, shippingNote: e.target.value }))}
                 />
               </div>
             </div>
