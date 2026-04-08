@@ -120,6 +120,17 @@ model Order {
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
 
+  // ที่อยู่จัดส่ง
+  shippingName       String?
+  shippingPhone      String?
+  shippingHouseNo    String?
+  shippingMoo        String?
+  shippingSubdistrict String?
+  shippingDistrict   String?
+  shippingProvince   String?
+  shippingPostalCode String?
+  shippingNote       String?
+
   user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   items     OrderItem[]
   payment   Payment?

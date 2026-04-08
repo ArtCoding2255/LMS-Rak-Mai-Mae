@@ -9,11 +9,33 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "กรุณาเข้าสู่ระบบ" }, { status: 401 });
   }
 
-  const { orderId, slipUrl, amount } = await req.json();
+  const {
+    orderId, slipUrl, amount,
+    shippingName, shippingPhone,
+    shippingHouseNo, shippingMoo, shippingSubdistrict,
+    shippingDistrict, shippingProvince, shippingPostalCode,
+    shippingNote,
+  } = await req.json();
 
   if (!orderId || !slipUrl) {
     return NextResponse.json(
       { error: "กรุณากรอกข้อมูลให้ครบ" },
+      { status: 400 }
+    );
+  }
+
+  if (!shippingName || !shippingPhone || !shippingHouseNo || !shippingSubdistrict || !shippingDistrict || !shippingProvince || !shippingPostalCode) {
+    return NextResponse.json(
+      { error: "กรุณากรอกข้อมูลที่อยู่จัดส่งให้ครบ" },
+      { status: 400 }
+    );
+  }
+
+  // ตรวจสอบเบอร์โทรศัพท์
+  const phoneRegex = /^0[0-9]{8,9}$/;
+  if (!phoneRegex.test(shippingPhone)) {
+    return NextResponse.json(
+      { error: "กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง (เช่น 0812345678)" },
       { status: 400 }
     );
   }
@@ -45,6 +67,22 @@ export async function POST(req: Request) {
       { status: 400 }
     );
   }
+
+  // บันทึกที่อยู่จัดส่งลงใน order
+  await db.order.update({
+    where: { id: orderId },
+    data: {
+      shippingName,
+      shippingPhone,
+      shippingHouseNo,
+      shippingMoo: shippingMoo || null,
+      shippingSubdistrict,
+      shippingDistrict,
+      shippingProvince,
+      shippingPostalCode,
+      shippingNote: shippingNote || null,
+    },
+  });
 
   const payment = await db.payment.create({
     data: {

@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   CreditCard,
   Upload,
@@ -12,6 +14,7 @@ import {
   Loader2,
   ArrowLeft,
   Copy,
+  MapPin,
 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
@@ -39,6 +42,20 @@ export default function CheckoutPage() {
   const [uploading, setUploading] = useState(false);
   const [slipPreview, setSlipPreview] = useState<string | null>(null);
   const [slipFile, setSlipFile] = useState<File | null>(null);
+
+  // ข้อมูลที่อยู่จัดส่ง
+  const [shipping, setShipping] = useState({
+    shippingName: "",
+    shippingPhone: "",
+    shippingHouseNo: "",
+    shippingMoo: "",
+    shippingSubdistrict: "",
+    shippingDistrict: "",
+    shippingProvince: "",
+    shippingPostalCode: "",
+    shippingNote: "",
+  });
+  const [phoneError, setPhoneError] = useState("");
 
   // สร้าง Order จากตะกร้า
   useEffect(() => {
@@ -76,8 +93,30 @@ export default function CheckoutPage() {
     reader.readAsDataURL(file);
   };
 
+  const validatePhone = (phone: string) => {
+    const phoneRegex = /^0[0-9]{8,9}$/;
+    if (!phone) return "กรุณากรอกเบอร์โทรศัพท์";
+    if (!phoneRegex.test(phone)) return "กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง (เช่น 0812345678)";
+    return "";
+  };
+
   const handleSubmitPayment = async () => {
     if (!slipFile || !order) return;
+
+    // ตรวจสอบข้อมูลที่อยู่จัดส่ง
+    const { shippingName, shippingPhone, shippingHouseNo, shippingSubdistrict, shippingDistrict, shippingProvince, shippingPostalCode } = shipping;
+    if (!shippingName || !shippingPhone || !shippingHouseNo || !shippingSubdistrict || !shippingDistrict || !shippingProvince || !shippingPostalCode) {
+      toast.error("กรุณากรอกข้อมูลที่อยู่จัดส่งให้ครบ");
+      return;
+    }
+
+    const phoneErr = validatePhone(shippingPhone);
+    if (phoneErr) {
+      setPhoneError(phoneErr);
+      toast.error(phoneErr);
+      return;
+    }
+    setPhoneError("");
 
     setUploading(true);
     try {
@@ -95,7 +134,7 @@ export default function CheckoutPage() {
         return;
       }
 
-      // แจ้งชำระเงิน
+      // แจ้งชำระเงินพร้อมข้อมูลที่อยู่จัดส่ง
       const paymentRes = await fetch("/api/payment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -103,6 +142,7 @@ export default function CheckoutPage() {
           orderId: order.id,
           slipUrl: uploadData.url,
           amount: order.total,
+          ...shipping,
         }),
       });
 
@@ -246,8 +286,123 @@ export default function CheckoutPage() {
           </Card>
         </div>
 
-        {/* อัปโหลดสลิป */}
-        <div>
+        {/* ที่อยู่จัดส่ง + อัปโหลดสลิป */}
+        <div className="space-y-8">
+          <Card className="p-6">
+            <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+              <MapPin className="h-5 w-5" />
+              ที่อยู่จัดส่งสินค้า
+            </h2>
+
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="shippingName">ชื่อผู้รับ <span className="text-red-500">*</span></Label>
+                  <Input
+                    id="shippingName"
+                    placeholder="ชื่อ-นามสกุล ผู้รับสินค้า"
+                    value={shipping.shippingName}
+                    onChange={(e) => setShipping({ ...shipping, shippingName: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="shippingPhone">เบอร์โทรศัพท์ <span className="text-red-500">*</span></Label>
+                  <Input
+                    id="shippingPhone"
+                    placeholder="0812345678"
+                    value={shipping.shippingPhone}
+                    onChange={(e) => {
+                      setShipping({ ...shipping, shippingPhone: e.target.value });
+                      if (phoneError) setPhoneError(validatePhone(e.target.value));
+                    }}
+                    required
+                  />
+                  {phoneError && <p className="text-red-500 text-xs">{phoneError}</p>}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="shippingHouseNo">เลขที่บ้าน <span className="text-red-500">*</span></Label>
+                  <Input
+                    id="shippingHouseNo"
+                    placeholder="เลขที่บ้าน / ซอย / ถนน"
+                    value={shipping.shippingHouseNo}
+                    onChange={(e) => setShipping({ ...shipping, shippingHouseNo: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="shippingMoo">หมู่</Label>
+                  <Input
+                    id="shippingMoo"
+                    placeholder="หมู่ที่ (ถ้ามี)"
+                    value={shipping.shippingMoo}
+                    onChange={(e) => setShipping({ ...shipping, shippingMoo: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="shippingSubdistrict">ตำบล / แขวง <span className="text-red-500">*</span></Label>
+                  <Input
+                    id="shippingSubdistrict"
+                    placeholder="ตำบล / แขวง"
+                    value={shipping.shippingSubdistrict}
+                    onChange={(e) => setShipping({ ...shipping, shippingSubdistrict: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="shippingDistrict">อำเภอ / เขต <span className="text-red-500">*</span></Label>
+                  <Input
+                    id="shippingDistrict"
+                    placeholder="อำเภอ / เขต"
+                    value={shipping.shippingDistrict}
+                    onChange={(e) => setShipping({ ...shipping, shippingDistrict: e.target.value })}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="shippingProvince">จังหวัด <span className="text-red-500">*</span></Label>
+                  <Input
+                    id="shippingProvince"
+                    placeholder="จังหวัด"
+                    value={shipping.shippingProvince}
+                    onChange={(e) => setShipping({ ...shipping, shippingProvince: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="shippingPostalCode">รหัสไปรษณีย์ <span className="text-red-500">*</span></Label>
+                  <Input
+                    id="shippingPostalCode"
+                    placeholder="รหัสไปรษณีย์ 5 หลัก"
+                    value={shipping.shippingPostalCode}
+                    onChange={(e) => setShipping({ ...shipping, shippingPostalCode: e.target.value })}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="shippingNote">หมายเหตุเพิ่มเติม</Label>
+                <textarea
+                  id="shippingNote"
+                  className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  placeholder="รายละเอียดเพิ่มเติม เช่น จุดสังเกต เวลาที่สะดวกรับสินค้า"
+                  value={shipping.shippingNote}
+                  onChange={(e) => setShipping({ ...shipping, shippingNote: e.target.value })}
+                />
+              </div>
+            </div>
+          </Card>
+
           <Card className="p-6">
             <h2 className="text-lg font-bold mb-4">
               อัปโหลดสลิปการโอนเงิน

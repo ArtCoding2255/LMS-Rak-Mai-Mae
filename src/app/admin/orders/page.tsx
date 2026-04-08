@@ -44,6 +44,7 @@ export default async function AdminOrdersPage() {
                 <TableHead>รายการ</TableHead>
                 <TableHead>ยอดรวม</TableHead>
                 <TableHead>สลิป</TableHead>
+                <TableHead>ที่อยู่จัดส่ง</TableHead>
                 <TableHead>สถานะ</TableHead>
                 <TableHead>วันที่</TableHead>
                 <TableHead>จัดการ</TableHead>
@@ -91,6 +92,24 @@ export default async function AdminOrdersPage() {
                         <span className="text-gray-400 text-sm">
                           ยังไม่แนบ
                         </span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {order.shippingName ? (
+                        <div className="text-xs space-y-0.5 max-w-[200px]">
+                          <p className="font-medium">{order.shippingName}</p>
+                          <p className="text-gray-500">{order.shippingPhone}</p>
+                          <p className="text-gray-500">
+                            {order.shippingHouseNo}
+                            {order.shippingMoo ? ` หมู่ ${order.shippingMoo}` : ""}
+                            {" "}ต.{order.shippingSubdistrict} อ.{order.shippingDistrict} จ.{order.shippingProvince} {order.shippingPostalCode}
+                          </p>
+                          {order.shippingNote && (
+                            <p className="text-gray-400 italic">หมายเหตุ: {order.shippingNote}</p>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-gray-400 text-sm">ไม่ระบุ</span>
                       )}
                     </TableCell>
                     <TableCell>
