@@ -17,7 +17,9 @@ export default async function MyCoursesPage() {
     include: {
       course: {
         include: {
-          lessons: { select: { id: true } },
+          lessons: {
+            select: { id: true, youtubeUrl: true, parentId: true },
+          },
         },
       },
     },
@@ -49,8 +51,10 @@ export default async function MyCoursesPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {enrollments.map((enrollment) => {
-            const totalLessons = enrollment.course.lessons.length;
-            const completedCount = enrollment.course.lessons.filter((l) =>
+            // นับเฉพาะบทเรียนที่มีวิดีโอ (บทย่อยหรือบทเดี่ยวที่มี video)
+            const playableLessons = enrollment.course.lessons.filter((l) => l.youtubeUrl);
+            const totalLessons = playableLessons.length;
+            const completedCount = playableLessons.filter((l) =>
               completedLessonIds.has(l.id)
             ).length;
             const percent =

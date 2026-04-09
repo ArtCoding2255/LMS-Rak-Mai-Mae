@@ -29,17 +29,31 @@ export default async function LearnPage({
     redirect("/student/courses");
   }
 
-  // ดึงข้อมูลคอร์สพร้อมบทเรียน
+  // ดึงข้อมูลคอร์สพร้อมบทเรียน (บทหลัก + บทย่อย)
   const course = await db.course.findUnique({
     where: { id: courseId },
     include: {
-      lessons: { orderBy: { position: "asc" } },
+      lessons: {
+        where: { parentId: null },
+        orderBy: { position: "asc" },
+        include: {
+          children: { orderBy: { position: "asc" } },
+        },
+      },
     },
   });
 
   if (!course || course.lessons.length === 0) {
     notFound();
   }
+
+  // สร้าง flat list ของบทเรียนที่มีวิดีโอ (สำหรับ navigation)
+  const playableLessons = course.lessons.flatMap((lesson) => {
+    if (lesson.children.length > 0) {
+      return lesson.children.filter((c) => c.youtubeUrl);
+    }
+    return lesson.youtubeUrl ? [lesson] : [];
+  });
 
   // ดึงความก้าวหน้าของนักเรียน
   const progress = await db.lessonProgress.findMany({
@@ -53,14 +67,19 @@ export default async function LearnPage({
 
   // เลือกบทเรียนปัจจุบัน
   const currentLesson = lessonId
-    ? course.lessons.find((l) => l.id === lessonId) || course.lessons[0]
-    : course.lessons[0];
+    ? playableLessons.find((l) => l.id === lessonId) || playableLessons[0]
+    : playableLessons[0];
+
+  if (!currentLesson) {
+    notFound();
+  }
 
   return (
     <div className="-m-6 md:-m-8">
       <LearningPlayer
         course={course}
         lessons={course.lessons}
+        playableLessons={playableLessons}
         currentLesson={currentLesson}
         progressMap={progressMap}
       />

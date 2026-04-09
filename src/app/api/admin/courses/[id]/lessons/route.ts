@@ -14,8 +14,13 @@ export async function GET(
 
     const { id } = await params;
     const lessons = await db.lesson.findMany({
-      where: { courseId: id },
+      where: { courseId: id, parentId: null },
       orderBy: { position: "asc" },
+      include: {
+        children: {
+          orderBy: { position: "asc" },
+        },
+      },
     });
 
     return NextResponse.json(lessons);
@@ -36,18 +41,18 @@ export async function POST(
     }
 
     const { id } = await params;
-    const { title, description, youtubeUrl } = await request.json();
+    const { title, description, youtubeUrl, parentId } = await request.json();
 
-    if (!title || !youtubeUrl) {
+    if (!title) {
       return NextResponse.json(
-        { error: "กรุณากรอกชื่อบทเรียนและ YouTube URL" },
+        { error: "กรุณากรอกชื่อบทเรียน" },
         { status: 400 }
       );
     }
 
-    // หาลำดับถัดไป
+    // หาลำดับถัดไป (ภายใน parent เดียวกัน)
     const lastLesson = await db.lesson.findFirst({
-      where: { courseId: id },
+      where: { courseId: id, parentId: parentId || null },
       orderBy: { position: "desc" },
     });
     const nextPosition = (lastLesson?.position || 0) + 1;
@@ -56,9 +61,10 @@ export async function POST(
       data: {
         title,
         description: description || null,
-        youtubeUrl,
+        youtubeUrl: youtubeUrl || null,
         position: nextPosition,
         courseId: id,
+        parentId: parentId || null,
       },
     });
 

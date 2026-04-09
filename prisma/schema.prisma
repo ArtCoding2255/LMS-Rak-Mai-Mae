@@ -66,16 +66,20 @@ model Lesson {
   id          String   @id @default(cuid())
   title       String
   description String?
-  youtubeUrl  String
+  youtubeUrl  String?
   position    Int
   courseId     String
+  parentId    String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   course         Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  parent         Lesson?          @relation("SubLessons", fields: [parentId], references: [id], onDelete: Cascade)
+  children       Lesson[]         @relation("SubLessons")
   lessonProgress LessonProgress[]
 
   @@index([courseId])
+  @@index([parentId])
 }
 
 // ==========================================

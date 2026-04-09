@@ -8,6 +8,7 @@ import {
   Circle,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   Menu,
   X,
   ArrowLeft,
@@ -21,8 +22,9 @@ interface Lesson {
   id: string;
   title: string;
   description: string | null;
-  youtubeUrl: string;
+  youtubeUrl: string | null;
   position: number;
+  children?: Lesson[];
 }
 
 interface Course {
@@ -33,12 +35,12 @@ interface Course {
 interface Props {
   course: Course;
   lessons: Lesson[];
+  playableLessons: Lesson[];
   currentLesson: Lesson;
   progressMap: Record<string, boolean>;
 }
 
 function getYoutubeEmbedUrl(url: string): string {
-  // รองรับหลายรูปแบบ YouTube URL
   const regExp =
     /(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
   const match = url.match(regExp);
@@ -51,6 +53,7 @@ function getYoutubeEmbedUrl(url: string): string {
 export function LearningPlayer({
   course,
   lessons,
+  playableLessons,
   currentLesson,
   progressMap: initialProgress,
 }: Props) {
@@ -59,16 +62,28 @@ export function LearningPlayer({
   const [progress, setProgress] = useState(initialProgress);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [markingComplete, setMarkingComplete] = useState(false);
+  const [expandedParents, setExpandedParents] = useState<Record<string, boolean>>(() => {
+    // เปิด parent ที่มี currentLesson อยู่
+    const initial: Record<string, boolean> = {};
+    lessons.forEach((l) => {
+      if (l.children?.some((c) => c.id === currentLesson.id)) {
+        initial[l.id] = true;
+      } else {
+        initial[l.id] = true;
+      }
+    });
+    return initial;
+  });
 
-  const currentIndex = lessons.findIndex((l) => l.id === currentLesson.id);
-  const prevLesson = currentIndex > 0 ? lessons[currentIndex - 1] : null;
+  const currentIndex = playableLessons.findIndex((l) => l.id === currentLesson.id);
+  const prevLesson = currentIndex > 0 ? playableLessons[currentIndex - 1] : null;
   const nextLesson =
-    currentIndex < lessons.length - 1 ? lessons[currentIndex + 1] : null;
+    currentIndex < playableLessons.length - 1 ? playableLessons[currentIndex + 1] : null;
 
-  const completedCount = lessons.filter((l) => progress[l.id]).length;
+  const completedCount = playableLessons.filter((l) => progress[l.id]).length;
   const totalPercent =
-    lessons.length > 0
-      ? Math.round((completedCount / lessons.length) * 100)
+    playableLessons.length > 0
+      ? Math.round((completedCount / playableLessons.length) * 100)
       : 0;
 
   const handleMarkComplete = async () => {
@@ -104,6 +119,49 @@ export function LearningPlayer({
     router.push(`${pathname}?lesson=${lessonId}`);
   };
 
+  const toggleParent = (parentId: string) => {
+    setExpandedParents((prev) => ({ ...prev, [parentId]: !prev[parentId] }));
+  };
+
+  const renderLessonItem = (lesson: Lesson, index: number, isChild = false) => {
+    const isActive = lesson.id === currentLesson.id;
+    const isCompleted = progress[lesson.id];
+    const hasVideo = !!lesson.youtubeUrl;
+
+    return (
+      <button
+        key={lesson.id}
+        onClick={() => hasVideo && navigateToLesson(lesson.id)}
+        className={cn(
+          "w-full text-left px-4 py-3 flex items-start gap-3 border-b hover:bg-gray-50 transition-colors",
+          isActive && "bg-nude-light border-l-4 border-l-brand",
+          isChild && "pl-10",
+          !hasVideo && "cursor-default"
+        )}
+        disabled={!hasVideo}
+      >
+        <div className="shrink-0 mt-0.5">
+          {isCompleted ? (
+            <CheckCircle className="h-5 w-5 text-green-500" />
+          ) : hasVideo ? (
+            <Circle className="h-5 w-5 text-gray-300" />
+          ) : null}
+        </div>
+        <div className="min-w-0">
+          <p
+            className={cn(
+              "text-sm font-medium line-clamp-2",
+              isActive && "text-brand-dark",
+              !hasVideo && "text-gray-500 font-semibold"
+            )}
+          >
+            {index + 1}. {lesson.title}
+          </p>
+        </div>
+      </button>
+    );
+  };
+
   return (
     <div className="flex h-[calc(100vh-0px)]">
       {/* Sidebar - รายการบทเรียน */}
@@ -132,43 +190,45 @@ export function LearningPlayer({
             <span className="text-xs text-gray-500">{totalPercent}%</span>
           </div>
           <p className="text-xs text-gray-400 mt-1">
-            {completedCount}/{lessons.length} บทเรียน
+            {completedCount}/{playableLessons.length} บทเรียน
           </p>
         </div>
 
         <div className="flex-1 overflow-y-auto">
           {lessons.map((lesson, index) => {
-            const isActive = lesson.id === currentLesson.id;
-            const isCompleted = progress[lesson.id];
+            const hasChildren = lesson.children && lesson.children.length > 0;
+            const isExpanded = expandedParents[lesson.id];
 
-            return (
-              <button
-                key={lesson.id}
-                onClick={() => navigateToLesson(lesson.id)}
-                className={cn(
-                  "w-full text-left px-4 py-3 flex items-start gap-3 border-b hover:bg-gray-50 transition-colors",
-                  isActive && "bg-nude-light border-l-4 border-l-brand"
-                )}
-              >
-                <div className="shrink-0 mt-0.5">
-                  {isCompleted ? (
-                    <CheckCircle className="h-5 w-5 text-green-500" />
-                  ) : (
-                    <Circle className="h-5 w-5 text-gray-300" />
-                  )}
-                </div>
-                <div className="min-w-0">
-                  <p
-                    className={cn(
-                      "text-sm font-medium line-clamp-2",
-                      isActive && "text-brand-dark"
-                    )}
+            if (hasChildren) {
+              return (
+                <div key={lesson.id}>
+                  {/* บทหลัก (เป็นหัวข้อ) */}
+                  <button
+                    onClick={() => toggleParent(lesson.id)}
+                    className="w-full text-left px-4 py-3 flex items-center gap-3 border-b bg-gray-50 hover:bg-gray-100 transition-colors"
                   >
-                    {index + 1}. {lesson.title}
-                  </p>
+                    <ChevronDown
+                      className={cn(
+                        "h-4 w-4 text-gray-400 transition-transform shrink-0",
+                        !isExpanded && "-rotate-90"
+                      )}
+                    />
+                    <p className="text-sm font-semibold text-gray-700">
+                      {index + 1}. {lesson.title}
+                    </p>
+                  </button>
+
+                  {/* บทย่อย */}
+                  {isExpanded &&
+                    lesson.children!.map((child, childIndex) =>
+                      renderLessonItem(child, childIndex, true)
+                    )}
                 </div>
-              </button>
-            );
+              );
+            }
+
+            // บทเรียนที่ไม่มี children (บทเดี่ยว)
+            return renderLessonItem(lesson, index);
           })}
         </div>
       </div>
@@ -190,7 +250,7 @@ export function LearningPlayer({
           </Button>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold line-clamp-1">
-              {currentIndex + 1}. {currentLesson.title}
+              {currentLesson.title}
             </p>
           </div>
         </div>
@@ -198,12 +258,14 @@ export function LearningPlayer({
         {/* Video */}
         <div className="flex-1 bg-black flex items-center justify-center">
           <div className="w-full h-full max-h-[70vh]">
-            <iframe
-              src={getYoutubeEmbedUrl(currentLesson.youtubeUrl)}
-              className="w-full h-full"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
+            {currentLesson.youtubeUrl && (
+              <iframe
+                src={getYoutubeEmbedUrl(currentLesson.youtubeUrl)}
+                className="w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            )}
           </div>
         </div>
 

@@ -29,7 +29,11 @@ export default async function CourseDetailPage({
   const course = await db.course.findUnique({
     where: { slug, published: true },
     include: {
-      lessons: { orderBy: { position: "asc" } },
+      lessons: {
+        where: { parentId: null },
+        orderBy: { position: "asc" },
+        include: { children: { orderBy: { position: "asc" } } },
+      },
       _count: { select: { enrollments: true } },
     },
   });
@@ -74,22 +78,43 @@ export default async function CourseDetailPage({
           {/* Lessons List */}
           <h2 className="text-xl font-bold mb-4">เนื้อหาในคอร์ส</h2>
           <div className="space-y-3">
-            {course.lessons.map((lesson, index) => (
-              <div
-                key={lesson.id}
-                className="flex items-center gap-4 p-4 rounded-lg border bg-gray-50"
-              >
-                <div className="w-8 h-8 rounded-full bg-brand/10 text-brand-dark flex items-center justify-center text-sm font-semibold shrink-0">
-                  {index + 1}
+            {course.lessons.map((lesson: { id: string; title: string; description: string | null; children?: { id: string; title: string; description: string | null }[] }, index: number) => (
+              <div key={lesson.id}>
+                <div className="flex items-center gap-4 p-4 rounded-lg border bg-gray-50">
+                  <div className="w-8 h-8 rounded-full bg-brand/10 text-brand-dark flex items-center justify-center text-sm font-semibold shrink-0">
+                    {index + 1}
+                  </div>
+                  <div>
+                    <h3 className="font-medium">{lesson.title}</h3>
+                    {lesson.description && (
+                      <p className="text-sm text-gray-500">
+                        {lesson.description}
+                      </p>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-medium">{lesson.title}</h3>
-                  {lesson.description && (
-                    <p className="text-sm text-gray-500">
-                      {lesson.description}
-                    </p>
-                  )}
-                </div>
+                {lesson.children && lesson.children.length > 0 && (
+                  <div className="ml-10 mt-2 space-y-2">
+                    {lesson.children.map((child, childIndex: number) => (
+                      <div
+                        key={child.id}
+                        className="flex items-center gap-4 p-3 rounded-lg border border-dashed bg-white"
+                      >
+                        <div className="w-7 h-7 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center text-xs font-semibold shrink-0">
+                          {index + 1}.{childIndex + 1}
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-sm">{child.title}</h4>
+                          {child.description && (
+                            <p className="text-xs text-gray-500">
+                              {child.description}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>

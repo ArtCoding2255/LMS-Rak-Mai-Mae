@@ -14,7 +14,13 @@ export default async function AdminLessonsPage({
   const course = await db.course.findUnique({
     where: { id },
     include: {
-      lessons: { orderBy: { position: "asc" } },
+      lessons: {
+        where: { parentId: null },
+        orderBy: { position: "asc" },
+        include: {
+          children: { orderBy: { position: "asc" } },
+        },
+      },
     },
   });
 
