@@ -69,8 +69,12 @@ export default async function MyCoursesPage() {
                 href={`/student/courses/${enrollment.courseId}/learn`}
               >
                 <Card className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer">
-                  <div className="h-40 bg-gradient-to-br from-nude-light to-brand/10 flex items-center justify-center">
-                    <BookOpen className="h-12 w-12 text-brand-light" />
+                  <div className="h-40 bg-gradient-to-br from-nude-light to-brand/10 flex items-center justify-center overflow-hidden">
+                    {enrollment.course.imageUrl ? (
+                      <img src={enrollment.course.imageUrl} alt={enrollment.course.title} className="w-full h-full object-cover" />
+                    ) : (
+                      <BookOpen className="h-12 w-12 text-brand-light" />
+                    )}
                   </div>
                   <div className="p-4">
                     <div className="flex items-start justify-between gap-2 mb-2">

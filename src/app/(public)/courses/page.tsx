@@ -46,9 +46,13 @@ export default async function CoursesPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {courses.map((course) => (
             <Card key={course.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-              {/* Course Image Placeholder */}
-              <div className="h-48 bg-gradient-to-br from-nude-light to-brand/10 flex items-center justify-center">
-                <BookOpen className="h-16 w-16 text-brand-light" />
+              {/* Course Image */}
+              <div className="h-48 bg-gradient-to-br from-nude-light to-brand/10 flex items-center justify-center overflow-hidden">
+                {course.imageUrl ? (
+                  <img src={course.imageUrl} alt={course.title} className="w-full h-full object-cover" />
+                ) : (
+                  <BookOpen className="h-16 w-16 text-brand-light" />
+                )}
               </div>
               <CardContent className="pt-4">
                 <h2 className="font-semibold text-lg mb-2 line-clamp-2">

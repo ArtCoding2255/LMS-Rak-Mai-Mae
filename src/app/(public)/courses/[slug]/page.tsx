@@ -47,9 +47,13 @@ export default async function CourseDetailPage({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Course Info */}
         <div className="lg:col-span-2">
-          {/* Course Image Placeholder */}
-          <div className="h-64 md:h-80 bg-gradient-to-br from-nude-light to-brand/10 rounded-lg flex items-center justify-center mb-8">
-            <BookOpen className="h-24 w-24 text-brand-light" />
+          {/* Course Image */}
+          <div className="h-64 md:h-80 bg-gradient-to-br from-nude-light to-brand/10 rounded-lg flex items-center justify-center mb-8 overflow-hidden">
+            {course.imageUrl ? (
+              <img src={course.imageUrl} alt={course.title} className="w-full h-full object-cover rounded-lg" />
+            ) : (
+              <BookOpen className="h-24 w-24 text-brand-light" />
+            )}
           </div>
 
           <h1 className="text-3xl font-bold mb-4">{course.title}</h1>
