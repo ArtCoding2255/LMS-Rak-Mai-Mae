@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag, Truck, MessageCircle } from "lucide-react";
 
 export const dynamic = 'force-dynamic';
 
@@ -37,6 +37,25 @@ export default async function StudentOrdersPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold mb-6">ประวัติการสั่งซื้อ</h1>
+
+      <div className="mb-6 flex items-start gap-3 p-4 rounded-lg border border-blue-200 bg-blue-50">
+        <Truck className="h-5 w-5 text-blue-600 shrink-0 mt-0.5" />
+        <div className="flex-1 text-sm text-blue-800">
+          <p className="font-medium mb-1">ติดตามสถานะการจัดส่งสินค้า</p>
+          <p className="text-blue-600">
+            สามารถติดตามสถานะการจัดส่งสินค้าได้โดยติดต่อแอดมินผ่าน Line OA
+          </p>
+        </div>
+        <a
+          href="https://lin.ee/oxHGACz"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium bg-green-500 text-white hover:bg-green-600 transition-colors shrink-0"
+        >
+          <MessageCircle className="h-4 w-4" />
+          ติดต่อแอดมิน
+        </a>
+      </div>
 
       {orders.length === 0 ? (
         <Card className="p-8 text-center">

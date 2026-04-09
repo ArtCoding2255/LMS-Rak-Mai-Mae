@@ -10,6 +10,7 @@ import {
   ShoppingBag,
   ArrowLeft,
   MessageCircle,
+  Headphones,
 } from "lucide-react";
 
 const menuItems = [
@@ -60,7 +61,7 @@ export function StudentSidebar() {
         })}
       </nav>
 
-      <div className="mt-6 px-1">
+      <div className="mt-6 px-1 space-y-2">
         <a
           href="https://lin.ee/oxHGACz"
           target="_blank"
@@ -69,6 +70,15 @@ export function StudentSidebar() {
         >
           <MessageCircle className="h-4 w-4" />
           ปรึกษาคุณครู
+        </a>
+        <a
+          href="https://lin.ee/oxHGACz"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors"
+        >
+          <Headphones className="h-4 w-4" />
+          ติดต่อแอดมิน
         </a>
       </div>
     </aside>
