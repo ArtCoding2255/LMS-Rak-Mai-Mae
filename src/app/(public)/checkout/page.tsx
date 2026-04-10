@@ -246,7 +246,7 @@ export default function CheckoutPage() {
               <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                 <div>
                   <p className="text-sm text-gray-500">ชื่อบัญชี</p>
-                  <p className="font-medium">รักไหมแม่</p>
+                  <p className="font-medium">น.ส.เกสพิชญ์ ศรีบูรพา</p>
                 </div>
               </div>
               <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">

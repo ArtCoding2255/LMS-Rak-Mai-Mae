@@ -139,11 +139,23 @@ export function Navbar() {
           )}
         </div>
 
-        {/* Mobile Menu */}
-        <Sheet open={open} onOpenChange={setOpen}>
-          <SheetTrigger className="md:hidden inline-flex items-center justify-center h-10 w-10 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors">
-            <Menu className="h-5 w-5" />
-          </SheetTrigger>
+        {/* Mobile Actions */}
+        <div className="flex md:hidden items-center gap-1">
+          <Link
+            href="/cart"
+            className="relative inline-flex items-center justify-center h-10 w-10 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+          >
+            <ShoppingCart className="h-5 w-5" />
+            {cartCount > 0 && (
+              <span className="absolute -top-1 -right-1 flex items-center justify-center h-5 min-w-5 px-1 rounded-full bg-red-500 text-white text-xs font-bold">
+                {cartCount}
+              </span>
+            )}
+          </Link>
+          <Sheet open={open} onOpenChange={setOpen}>
+            <SheetTrigger className="inline-flex items-center justify-center h-10 w-10 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors">
+              <Menu className="h-5 w-5" />
+            </SheetTrigger>
           <SheetContent side="right" className="w-72">
             <div className="flex flex-col gap-4 mt-8 px-4">
               {navLinks.map((link) => (
@@ -218,6 +230,7 @@ export function Navbar() {
             </div>
           </SheetContent>
         </Sheet>
+        </div>
       </div>
     </header>
   );
