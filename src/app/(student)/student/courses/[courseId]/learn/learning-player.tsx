@@ -9,8 +9,9 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronDown,
-  Menu,
-  X,
+  ChevronUp,
+  PanelLeftClose,
+  PanelLeftOpen,
   ArrowLeft,
   MessageCircle,
 } from "lucide-react";
@@ -61,6 +62,7 @@ export function LearningPlayer({
   const pathname = usePathname();
   const [progress, setProgress] = useState(initialProgress);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [contentOpen, setContentOpen] = useState(true);
   const [markingComplete, setMarkingComplete] = useState(false);
   const [expandedParents, setExpandedParents] = useState<Record<string, boolean>>(() => {
     // เปิด parent ที่มี currentLesson อยู่
@@ -241,11 +243,12 @@ export function LearningPlayer({
             variant="ghost"
             size="icon"
             onClick={() => setSidebarOpen(!sidebarOpen)}
+            title={sidebarOpen ? "ซ่อนรายการบทเรียน" : "แสดงรายการบทเรียน"}
           >
             {sidebarOpen ? (
-              <X className="h-5 w-5" />
+              <PanelLeftClose className="h-5 w-5" />
             ) : (
-              <Menu className="h-5 w-5" />
+              <PanelLeftOpen className="h-5 w-5" />
             )}
           </Button>
           <div className="flex-1 min-w-0">
@@ -257,7 +260,7 @@ export function LearningPlayer({
 
         {/* Video */}
         <div className="flex-1 bg-black flex items-center justify-center">
-          <div className="w-full h-full max-h-[70vh]">
+          <div className="w-full h-full">
             {currentLesson.youtubeUrl && (
               <iframe
                 src={getYoutubeEmbedUrl(currentLesson.youtubeUrl)}
@@ -269,8 +272,26 @@ export function LearningPlayer({
           </div>
         </div>
 
+        {/* Toggle Content Button */}
+        <button
+          onClick={() => setContentOpen(!contentOpen)}
+          className="flex items-center justify-center gap-1 py-1.5 border-t bg-gray-50 hover:bg-gray-100 transition-colors text-xs text-gray-500 shrink-0"
+        >
+          {contentOpen ? (
+            <>
+              <ChevronDown className="h-3.5 w-3.5" />
+              ซ่อนเนื้อหา
+            </>
+          ) : (
+            <>
+              <ChevronUp className="h-3.5 w-3.5" />
+              แสดงเนื้อหา
+            </>
+          )}
+        </button>
+
         {/* Bottom Controls */}
-        <div className="px-4 py-4 border-t bg-white shrink-0">
+        <div className={cn("px-4 py-4 border-t bg-white shrink-0 transition-all duration-300 overflow-hidden", contentOpen ? "" : "h-0 p-0 border-0")}>
           <div className="flex items-center justify-between gap-4">
             <Button
               variant="outline"

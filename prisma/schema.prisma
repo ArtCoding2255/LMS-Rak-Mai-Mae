@@ -96,6 +96,7 @@ model Enrollment {
   userId    String
   courseId   String
   status    EnrollmentStatus @default(ACTIVE)
+  seen      Boolean          @default(false)
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
 

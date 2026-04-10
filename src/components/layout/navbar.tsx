@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
@@ -28,9 +28,19 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { count: cartCount } = useCart();
+  const [unseenCourses, setUnseenCourses] = useState(0);
 
   const dashboardLink =
     session?.user?.role === "ADMIN" ? "/admin" : "/student";
+
+  useEffect(() => {
+    if (session?.user && session.user.role !== "ADMIN") {
+      fetch("/api/enrollments/unseen")
+        .then((res) => res.json())
+        .then((data) => setUnseenCourses(data.count || 0))
+        .catch(() => {});
+    }
+  }, [session]);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
@@ -59,6 +69,17 @@ export function Navbar() {
         <div className="hidden md:flex items-center gap-3">
           {session ? (
             <>
+              {session.user?.role !== "ADMIN" && (
+                <Link
+                  href="/student/courses"
+                  className="relative inline-flex items-center justify-center h-10 w-10 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+                >
+                  <BookOpen className="h-5 w-5" />
+                  {unseenCourses > 0 && (
+                    <span className="absolute -top-1 -right-1 flex items-center justify-center h-4 w-4 rounded-full bg-red-500" />
+                  )}
+                </Link>
+              )}
               <Link
                 href="/cart"
                 className="relative inline-flex items-center justify-center h-10 w-10 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
@@ -141,6 +162,17 @@ export function Navbar() {
 
         {/* Mobile Actions */}
         <div className="flex md:hidden items-center gap-1">
+          {session?.user?.role !== "ADMIN" && session && (
+            <Link
+              href="/student/courses"
+              className="relative inline-flex items-center justify-center h-10 w-10 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+            >
+              <BookOpen className="h-5 w-5" />
+              {unseenCourses > 0 && (
+                <span className="absolute -top-1 -right-1 flex items-center justify-center h-4 w-4 rounded-full bg-red-500" />
+              )}
+            </Link>
+          )}
           <Link
             href="/cart"
             className="relative inline-flex items-center justify-center h-10 w-10 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
@@ -194,9 +226,14 @@ export function Navbar() {
                     <Link
                       href="/student/courses"
                       onClick={() => setOpen(false)}
-                      className="text-lg font-medium text-gray-700 hover:text-brand-dark"
+                      className="text-lg font-medium text-gray-700 hover:text-brand-dark flex items-center gap-2"
                     >
                       คอร์สเรียนของฉัน
+                      {unseenCourses > 0 && (
+                        <span className="flex items-center justify-center h-5 min-w-5 px-1 rounded-full bg-red-500 text-white text-xs font-bold">
+                          {unseenCourses}
+                        </span>
+                      )}
                     </Link>
                   )}
                   <button

@@ -12,6 +12,12 @@ export default async function MyCoursesPage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
 
+  // Mark unseen enrollments as seen
+  await db.enrollment.updateMany({
+    where: { userId: session.user.id, seen: false },
+    data: { seen: true },
+  });
+
   const enrollments = await db.enrollment.findMany({
     where: { userId: session.user.id },
     include: {
