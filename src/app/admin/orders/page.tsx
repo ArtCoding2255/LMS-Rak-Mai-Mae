@@ -119,9 +119,10 @@ export default async function AdminOrdersPage() {
                       {new Date(order.createdAt).toLocaleDateString("th-TH")}
                     </TableCell>
                     <TableCell>
-                      {order.status === "PENDING" && order.payment && (
-                        <OrderActions orderId={order.id} />
-                      )}
+                      <OrderActions
+                        orderId={order.id}
+                        showApproval={order.status === "PENDING" && !!order.payment}
+                      />
                     </TableCell>
                   </TableRow>
                 );
