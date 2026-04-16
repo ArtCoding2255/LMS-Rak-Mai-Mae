@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { BookOpen, Users, Award, Heart } from "lucide-react";
+import { FaqSection } from "@/components/faq-section";
 
 const features = [
   {
@@ -17,7 +18,7 @@ const features = [
   {
     icon: Award,
     title: "ผู้สอนมืออาชีพ",
-    description: "สอนโดยช่างฝีมือที่มีประสบการณ์การถักโครเชต์กว่า 20 ปี",
+    description: "สอนโดยช่างฝีมือที่มีประสบการณ์การถักโครเชต์กว่า 40 ปี",
   },
   {
     icon: Heart,
@@ -77,6 +78,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* FAQ */}
+      <FaqSection />
 
       {/* CTA Section */}
       <section className="bg-brand text-white py-16">
