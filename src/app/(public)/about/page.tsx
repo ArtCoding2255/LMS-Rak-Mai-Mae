@@ -20,22 +20,40 @@ export default function AboutPage() {
         <h2 className="text-2xl font-bold mb-4">เรื่องราวของเรา</h2>
         <div className="space-y-4 text-gray-600 leading-relaxed">
           <p>
-            รักไหมแม่ Academy เกิดจากความรักและหลงใหลในงานถักโครเชต์
-            ที่ส่งต่อจากรุ่นสู่รุ่น จากคุณยายสู่แม่ และจากแม่สู่ลูก
-            เราเชื่อว่าทุกคนสามารถเรียนรู้ศิลปะการถักโครเชต์ได้
-            ไม่ว่าจะอายุเท่าไหร่หรือมีพื้นฐานมากน้อยแค่ไหน
+            สวัสดีค่ะ พวกเรา รักไหมแม่ นะคะ รักไหมแม่ Academy เกิดขึ้นเพราะอยากส่งต่อความสุข
+            ความภาคภูมิใจค่ะ การที่เราได้ทำงาน handmade ด้วยฝีมือของตัวเอง ได้ใช้งานจากผลงานนั้นจริงๆ
+            เป็นความสุข เป็นคุณค่า และความอบอุ่นใจที่เราต้องการส่งต่อค่ะ
           </p>
           <p>
-            ด้วยประสบการณ์กว่า 20 ปีในการถักโครเชต์
-            เราได้รวบรวมความรู้และเทคนิคต่างๆ
-            มาจัดทำเป็นคอร์สออนไลน์ที่เข้าใจง่าย ทำตามได้ทันที
-            เพื่อให้ทุกคนสามารถสร้างผลงานที่สวยงามด้วยมือของตัวเอง
+            รักไหมแม่ เริ่มต้นมาจาก คุณแม่กุ่ย ผู้ชื่นชอบและรักงานถักโครเชต์มาตลอดมากกว่า 40 ปี
+            กลายเป็นภาพจำสายตาของลูกๆ จนสุดท้าย ลูกสาวโดนคุณแม่ป้ายยาแบบเนียนๆ
+            จนกลายมาเป็นสาวเจน Z ผู้ชื่นชอบงานถัก และมองเห็นว่าในประเทศไทยเรา
+            ยังขาดสื่อการสอนคุณภาพดีๆ และ community ให้กับคนกลุ่มใหม่ที่อยากเริ่มต้นถักโครเชต์
+            เพราะโครเชต์ก็เป็นศาสตร์และศิลป์ที่ยอมรับเลยค่ะ ว่าก็มีความซับซ้อนสูง
+            เทคนิคต่างๆ มากมาย เป็นศาสตร์ที่มีเสน่ห์มากกกก
+            คุณลูกสาวเลยก่อตั้งโรงเรียนสอนออนไลน์มาเลยละกัน
+            เนื่องจากมีลูกค้าที่ร้านถามหาคลิปสอนกันเยอะ มากๆ
+            (พวกเรามีร้านขายไหมพรมและอุปกรณ์มาก่อนแล้วค่ะ ร้านรักไหมแม่)
           </p>
           <p>
-            ไม่ว่าคุณจะอยากถักตุ๊กตา ถักกระเป๋า หรือถักผ้าพันคอ
-            เรามีคอร์สที่ตอบโจทย์ทุกความต้องการ
-            มาร่วมเป็นส่วนหนึ่งของครอบครัวรักไหมแม่กันนะคะ
+            อย่างไรก็ฝากโรงเรียนสอนถักโครเชต์ออนไลน์ ครบวงจรแห่งแรกในไทย
+            ไว้ในอ้อมอกอ้อมใจน้าค้าาา
           </p>
+        </div>
+      </div>
+
+      {/* Gallery */}
+      <div className="mb-16">
+        <h2 className="text-2xl font-bold mb-6 text-center">Our Crochet Workshop</h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          <img src="https://res.cloudinary.com/dl5ze3lps/image/upload/v1776341472/654238077_122283830558192158_1202469106502079528_n_powaff.jpg" alt="Crochet Workshop" className="w-full h-48 md:h-64 object-cover rounded-lg" />
+          <img src="https://res.cloudinary.com/dl5ze3lps/image/upload/v1776341472/654424796_122283830342192158_3629305421335710633_n_o5fn5j.jpg" alt="Crochet Workshop" className="w-full h-48 md:h-64 object-cover rounded-lg" />
+          <img src="https://res.cloudinary.com/dl5ze3lps/image/upload/v1776341473/656999916_921884324086975_6710166474914313388_n_isgptu.jpg" alt="Crochet Workshop" className="w-full h-48 md:h-64 object-cover rounded-lg" />
+          <img src="https://res.cloudinary.com/dl5ze3lps/image/upload/v1776341473/656139527_122284414322192158_4091436485488787545_n_vlhwac.jpg" alt="Crochet Workshop" className="w-full h-48 md:h-64 object-cover rounded-lg" />
+          <img src="https://res.cloudinary.com/dl5ze3lps/image/upload/v1776341472/655246552_921884110753663_7951783117751544497_n_wh8bif.jpg" alt="Crochet Workshop" className="w-full h-48 md:h-64 object-cover rounded-lg" />
+          <img src="https://res.cloudinary.com/dl5ze3lps/image/upload/v1776341472/654234194_921884520753622_7817824653425224357_n_qxqqpw.jpg" alt="Crochet Workshop" className="w-full h-48 md:h-64 object-cover rounded-lg" />
+          <img src="https://res.cloudinary.com/dl5ze3lps/image/upload/v1776341473/654839194_122283830588192158_4007986709395528171_n_czuec3.jpg" alt="Crochet Workshop" className="w-full h-48 md:h-64 object-cover rounded-lg" />
+          <img src="https://res.cloudinary.com/dl5ze3lps/image/upload/v1776341473/654483104_122283830396192158_7103745983372049971_n_jvh4e1.jpg" alt="Crochet Workshop" className="w-full h-48 md:h-64 object-cover rounded-lg" />
         </div>
       </div>
 
@@ -44,7 +62,7 @@ export default function AboutPage() {
         <Card className="text-center">
           <CardContent className="pt-6">
             <Heart className="h-8 w-8 text-romantic-dark mx-auto mb-3" />
-            <div className="text-3xl font-bold text-brand-dark mb-1">20+</div>
+            <div className="text-3xl font-bold text-brand-dark mb-1">40+</div>
             <p className="text-gray-600">ปีประสบการณ์</p>
           </CardContent>
         </Card>
