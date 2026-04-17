@@ -7,7 +7,7 @@ import Link from "@tiptap/extension-link";
 import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
 import Placeholder from "@tiptap/extension-placeholder";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import {
   Bold,
   Italic,
@@ -84,6 +84,12 @@ export function TiptapEditor({ content, onChange }: TiptapEditorProps) {
       },
     },
   });
+
+  useEffect(() => {
+    if (editor && content && editor.getHTML() !== content) {
+      editor.commands.setContent(content);
+    }
+  }, [editor, content]);
 
   if (!editor) return null;
 
