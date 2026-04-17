@@ -10,6 +10,7 @@ import {
   ClipboardList,
   CreditCard,
   FileText,
+  Newspaper,
   ArrowLeft,
 } from "lucide-react";
 
@@ -17,6 +18,8 @@ const menuItems = [
   { href: "/admin", label: "แดชบอร์ด", icon: LayoutDashboard },
   { href: "/admin/courses", label: "จัดการคอร์ส", icon: BookOpen },
   { href: "/admin/products", label: "โครเชต์แพทเทิร์น", icon: FileText },
+  { href: "/admin/articles", label: "จัดการบทความ", icon: Newspaper },
+  { href: "/admin/article-categories", label: "หมวดหมู่บทความ", icon: FileText },
   { href: "/admin/users", label: "จัดการผู้ใช้", icon: Users },
   { href: "/admin/enrollments", label: "การลงทะเบียน", icon: ClipboardList },
   { href: "/admin/orders", label: "คำสั่งซื้อ/ชำระเงิน", icon: CreditCard },

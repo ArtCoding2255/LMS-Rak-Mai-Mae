@@ -30,6 +30,7 @@ model User {
   enrollments       Enrollment[]
   lessonProgress    LessonProgress[]
   productPurchases  ProductPurchase[]
+  articles          Article[]
 }
 
 // ==========================================
@@ -259,7 +260,43 @@ model LessonProgress {
 }
 
 // ==========================================
-// 13. PasswordResetToken - โทเค็นรีเซ็ตรหัสผ่าน
+// 13. ArticleCategory - หมวดหมู่บทความ
+// ==========================================
+model ArticleCategory {
+  id        String    @id @default(cuid())
+  name      String
+  slug      String    @unique
+  createdAt DateTime  @default(now())
+
+  articles  Article[]
+}
+
+// ==========================================
+// 14. Article - บทความ
+// ==========================================
+model Article {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  excerpt     String?
+  content     String
+  coverImage  String?
+  published   Boolean  @default(false)
+  categoryId  String
+  authorId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  category ArticleCategory @relation(fields: [categoryId], references: [id])
+  author   User            @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([categoryId])
+  @@index([authorId])
+  @@index([slug])
+}
+
+// ==========================================
+// 15. PasswordResetToken - โทเค็นรีเซ็ตรหัสผ่าน
 // ==========================================
 model PasswordResetToken {
   id        String   @id @default(cuid())
